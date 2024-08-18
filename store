@@ -1,0 +1,54 @@
+
+create table store(
+order_no int,
+code int,
+item varchar(200),
+quantity int,
+price int,
+discount varchar(10),
+net_price int,
+expiry_date date,
+primary key(order_no)
+);
+
+insert into store values (1,1,'Soap',5,75,'2%',72,'2024-12-31'),(2,2,'Chilly powder',2,24,'3%',20,'2024-11-15'),(3,3,'Atta',2,70,'3%',78,'2024-10-20'),(4,4,'Pepper',5,524,'5%',520,'2024-09-30'),(5,5,'Salt',4,40,'2%',39,'2025-01-31');
+
+select * from store;
+
+select mod(net_price,9) from store;
+
+select net_price,power(net_price,2) from store;
+
+select round(net_price/7,0) from store;
+
+select length(item) from store;
+
+select concat(item,code) from store;
+
+select substring(item,1,3) from store;
+
+select * from store where item like 's%';
+
+select * from store where item like '%a';
+
+select * from store where item like '%s%';
+
+select current_date();
+
+select date_add(expiry_date,interval 30 day) from store;
+
+select date_sub(expiry_date,interval 10 day) from store;
+
+select datediff(expiry_date,current_date()) from store;
+
+select extract(year from expiry_date) from store;
+
+select extract(month from expiry_date) from store;
+
+select extract(day from expiry_date) from store;
+
+select date_format(expiry_date,"%d %m %Y") from store;
+
+select timestampdiff(month,current_date(),expiry_date) from store;
+
+select date_add(expiry_date,interval 1 year) from store;
