@@ -17,4 +17,4 @@ select avg(Salary) from EMPLOYEE,PROJECT where Pname="ProductX" and EMPLOYEE.Dno
 select count(*) from DEPARTMENT,PROJECT,WORKS_ON where Pname="ProductX"and not Dname="Research" and DEPARTMENT.Dnumber=PROJECT.Dnum and PROJECT.Pnumber=WORKS_ON.Pno;
 
 
-select sum(Salary) from EMPLOYEE where Super_ssn=(select Ssn from EMPLOYEE where Fname="Franklin" and Lname="Wong")
+select sum(Salary) from EMPLOYEE where Super_ssn=(select Ssn from EMPLOYEE where Fname="Franklin" and Lname="Wong");
