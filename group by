@@ -1,0 +1,23 @@
+select Dname,Dno,count(Ssn) as "no_of_emp" from EMPLOYEE e,DEPARTMENT d where e.Dno=d.Dnumber group by Dno;
+
+select Dname,Dno,count(Ssn) as "no_of_emp",avg(Salary) as "avg_salary" from EMPLOYEE e,DEPARTMENT d where e.Dno=d.Dnumber group by Dno;
+
+select Pname,Pnumber,count(Ssn) as "no_of_emp" from EMPLOYEE e,PROJECT p where e.Dno=p.Dnum group by Pnumber;
+
+select Pname,Pnumber,count(Ssn) as "no_of_emp" from EMPLOYEE e,PROJECT p where e.Dno=p.Dnum group by Pnumber having no_of_emp>2;
+
+select Pname,Pnumber,count(Ssn) as "no_of_emp" from EMPLOYEE e,PROJECT p where e.Dno=p.Dnum and Dnum=5 group by Pnumber;
+
+select Dno,count(Ssn) as "no_of_emp" from EMPLOYEE e,DEPARTMENT d where e.Dno=d.Dnumber and Salary>40000 group by Dno having no_of_emp>2;
+
+select Dname,Dno,count(Ssn) as "no_of_emp" from EMPLOYEE e,DEPARTMENT d where e.Dno=d.Dnumber and Salary>40000 group by Dno having no_of_emp>2;
+
+select Dname,sum(Salary) as "Total_Salary" from EMPLOYEE e,DEPARTMENT d where e.Dno=d.Dnumber group by Dname having Total_Salary>100000;
+
+select Fname,Minit,Lname,Salary from EMPLOYEE e,DEPARTMENT d where e.Dno=d.Dnumber and Dname='Research' order by Lname;
+
+select Ssn,Fname,Dname,Salary from EMPLOYEE e,DEPARTMENT d where e.Dno=d.Dnumber order by Dname,Salary desc;
+
+select Dname from DEPARTMENT order by Dnumber desc limit 1;
+
+select Fname,Minit,Lname,Pname from EMPLOYEE e,PROJECT p where e.Dno=p.Dnum order by Dno,Lname,Fname;
