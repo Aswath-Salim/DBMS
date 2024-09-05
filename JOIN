@@ -1,0 +1,39 @@
+SELECT Fname,Minit,Lname,Salary FROM EMPLOYEE WHERE Salary>(SELECT MIN(Salary) FROM EMPLOYEE);
+
+SELECT * FROM EMPLOYEE WHERE Salary>(SELECT MAX(Salary) FROM EMPLOYEE WHERE Dno=5);
+
+SELECT * FROM EMPLOYEE WHERE Salary>(SELECT AVG(Salary) FROM EMPLOYEE);
+
+SELECT Fname,Minit,Lname,Address FROM EMPLOYEE JOIN DEPARTMENT ON EMPLOYEE.Dno=DEPARTMENT.Dnumber WHERE Dname ='Research';
+
+SELECT Fname,Minit,Lname FROM EMPLOYEE e JOIN DEPENDENT d ON e.Ssn=d.Essn WHERE e.Fname=d.Dependent_name and e.Sex=d.Sex;
+
+SELECT Pname,Pnumber FROM PROJECT p JOIN EMPLOYEE e ON p.Dnum=e.Dno WHERE Lname='Smith';
+
+SELECT DISTINCT e1.Fname FROM EMPLOYEE e1 JOIN EMPLOYEE e2 on e1.Dno=e2.Dno WHERE e2.Fname LIKE '%h%';
+
+SELECT Fname,Address FROM EMPLOYEE WHERE Address like 'Houston%';
+
+SELECT Fname,Address FROM EMPLOYEE WHERE Address like '%Houston';
+
+SELECT Fname,Bdate FROM EMPLOYEE WHERE YEAR(Bdate)=1960;
+
+SELECT Fname,Salary FROM EMPLOYEE WHERE Dno=5 AND Salary<=40000 AND Salary>=30000;
+
+SELECT Fname,Lname FROM EMPLOYEE WHERE Dno=(SELECT Dno FROM EMPLOYEE WHERE Fname='Ramesh') AND Fname!='Ramesh';
+
+SELECT e.Dno FROM EMPLOYEE e LEFT JOIN DEPARTMENT d ON e.Dno=d.Dnumber WHERE d.Dnumber=NULL;
+
+SELECT d.Dnumber FROM DEPARTMENT d LEFT JOIN EMPLOYEE e ON d.Dnumber=e.Dno WHERE e.Dno=NULL;
+
+SELECT DISTINCT p.Pname,p.Pnumber,p.Dnum,m.Lname,m.Address,m.Bdate FROM PROJECT p JOIN DEPARTMENT d ON d.Dnumber=p.Dnum JOIN EMPLOYEE m ON d.Mgr_ssn=m.Ssn WHERE p.Plocation ='Stafford';
+
+SELECT e1.Fname,e1.Lname,e2.Fname,e2.Lname FROM EMPLOYEE e1 JOIN EMPLOYEE e2 ON e1.Super_ssn=e2.Ssn;
+
+SELECT e1.Fname,e1.Lname,e2.Fname,e2.Lname FROM EMPLOYEE e1 LEFT JOIN EMPLOYEE e2 ON e1.Super_ssn=e2.Ssn;
+
+SELECT * FROM EMPLOYEE WHERE Super_ssn IS NULL;
+
+SELECT e.Fname,e.Lname,e.Salary AS old_Salary,e.Salary*1.10 AS new_Salary FROM EMPLOYEE e JOIN PROJECT p ON e.Dno=p.Dnum WHERE p.Pname='ProductX';
+
+SELECT e.Fname,e.Lname FROM EMPLOYEE e JOIN DEPARTMENT d ON d.Dnumber=e.Dno JOIN EMPLOYEE m ON d.Mgr_ssn=m.ssn WHERE m.Lname='Wong';
