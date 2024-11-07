@@ -1,0 +1,104 @@
+CREATE TABLE College_vacancies (
+    br_id INT PRIMARY KEY,
+    deptname VARCHAR(50) NOT NULL UNIQUE,
+    totalseats INT DEFAULT 50,
+    admitted INT DEFAULT 0,
+    vacancy INT AS (totalseats - admitted)
+);
+
+
+CREATE TABLE Admission (
+    sid INT PRIMARY KEY AUTO_INCREMENT,
+    br_id INT,
+    sname VARCHAR(100) NOT NULL,
+    dob DATE,
+    address VARCHAR(255),
+    m_phy INT,
+    m_che INT,
+    m_bio INT,
+    m_maths INT,
+    m_tot INT,
+    FOREIGN KEY (br_id) REFERENCES College_vacancies(br_id)
+);
+
+
+INSERT INTO College_vacancies (br_id, deptname, totalseats)
+VALUES
+(1, 'CSE', 50),
+(2, 'ECE', 50),
+(3, 'EEE', 50),
+(4, 'MECH', 50),
+(5, 'CIVIL', 50);
+
+
+INSERT INTO Admission (br_id, sname, dob, address, m_phy, m_che, m_bio, m_maths, m_tot)
+VALUES
+(1, 'Alice', '2005-01-15', 'Address1', 90, 85, 88, 92, 355),
+(1, 'Bob', '2004-11-22', 'Address2', 78, 74, 80, 81, 313),
+(2, 'Charlie', '2005-07-09', 'Address3', 85, 82, 79, 88, 334),
+(3, 'David', '2004-03-25', 'Address4', 92, 91, 85, 87, 355),
+(1, 'Eve', '2005-05-18', 'Address5', 75, 78, 80, 77, 310),
+(4, 'Frank', '2005-08-10', 'Address6', 89, 90, 84, 82, 345),
+(2, 'Grace', '2005-09-12', 'Address7', 76, 80, 82, 79, 317),
+(3, 'Heidi', '2005-11-20', 'Address8', 83, 85, 79, 88, 335),
+(5, 'Ivan', '2005-02-15', 'Address9', 72, 74, 70, 68, 284),
+(1, 'Judy', '2004-12-01', 'Address10', 88, 86, 87, 90, 351);
+
+SELECT a.sid, a.sname, a.dob, a.address, a.m_phy, a.m_che, a.m_bio, a.m_maths, a.m_tot
+FROM Admission a
+JOIN College_vacancies cv ON a.br_id = cv.br_id
+WHERE cv.deptname = 'CSE';
+
+
+CREATE TRIGGER trg_close_admission
+BEFORE INSERT ON Admission
+FOR EACH ROW
+BEGIN
+    IF CURRENT_DATE > '2023-12-30' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Admissions are closed for this college.';
+    END IF;
+END;
+
+
+CREATE TRIGGER trg_admission_insert
+AFTER INSERT ON Admission
+FOR EACH ROW
+BEGIN
+    UPDATE College_vacancies
+    SET admitted = admitted + 1,
+        vacancy = totalseats - admitted
+    WHERE br_id = NEW.br_id;
+END;
+
+
+CREATE TRIGGER trg_admission_update
+AFTER UPDATE ON Admission
+FOR EACH ROW
+BEGIN
+    IF OLD.br_id <> NEW.br_id THEN
+        -- Decrease admitted and update vacancy for the old branch
+        UPDATE College_vacancies
+        SET admitted = admitted - 1,
+            vacancy = totalseats - admitted
+        WHERE br_id = OLD.br_id;
+
+        -- Increase admitted and update vacancy for the new branch
+        UPDATE College_vacancies
+        SET admitted = admitted + 1,
+            vacancy = totalseats - admitted
+        WHERE br_id = NEW.br_id;
+    END IF;
+END;
+
+
+CREATE TRIGGER trg_admission_delete
+AFTER DELETE ON Admission
+FOR EACH ROW
+BEGIN
+    UPDATE College_vacancies
+    SET admitted = admitted - 1,
+        vacancy = totalseats - admitted
+    WHERE br_id = OLD.br_id;
+END;
+
