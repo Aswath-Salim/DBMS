@@ -1,0 +1,119 @@
+CREATE TABLE Event (
+    eventid INT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    city VARCHAR(100)
+);
+
+
+CREATE TABLE Participant (
+    playerid INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    eventid INT,
+    gender CHAR(1) CHECK (gender IN ('M', 'F')),
+    year INT,
+    FOREIGN KEY (eventid) REFERENCES Event(eventid)
+);
+
+
+CREATE TABLE Prizes (
+    prizeid INT PRIMARY KEY,
+    prize_money DECIMAL(10, 2),
+    eventid INT,
+    rank INT CHECK (rank IN (1, 2, 3)),
+    year INT,
+    FOREIGN KEY (eventid) REFERENCES Event(eventid)
+);
+
+CREATE TABLE Winners (
+    prizeid INT,
+    playerid INT,
+    PRIMARY KEY (prizeid, playerid),
+    FOREIGN KEY (prizeid) REFERENCES Prizes(prizeid),
+    FOREIGN KEY (playerid) REFERENCES Participant(playerid)
+);
+
+INSERT INTO Event (eventid, name, description, city) VALUES
+(1, 'Chess Championship', 'Annual Chess Event', 'New York'),
+(2, 'Marathon', 'City Marathon', 'Boston'),
+(3, 'Swimming Contest', 'National Swimming Championship', 'Miami'),
+(4, 'Basketball Tournament', 'Regional Basketball Competition', 'Los Angeles'),
+(5, 'Soccer Cup', 'Citywide Soccer Cup', 'Chicago'),
+(6, 'Tennis Open', 'Open Tennis Championship', 'San Francisco'),
+(7, 'Cycling Race', 'Biking Event Across City', 'Austin'),
+(8, 'Badminton Challenge', 'Badminton Tournament', 'Seattle'),
+(9, 'Table Tennis Finals', 'National Table Tennis Competition', 'Orlando'),
+(10, 'Running Relay', 'Annual Running Relay Event', 'Denver');
+
+
+INSERT INTO Participant (playerid, name, eventid, gender, year) VALUES
+(1, 'Alice', 1, 'F', 2023),
+(2, 'Bob', 1, 'M', 2023),
+(3, 'Charlie', 2, 'M', 2023),
+(4, 'Diana', 3, 'F', 2023),
+(5, 'Ethan', 4, 'M', 2023),
+(6, 'Fiona', 5, 'F', 2023),
+(7, 'George', 6, 'M', 2023),
+(8, 'Hannah', 7, 'F', 2023),
+(9, 'Isaac', 8, 'M', 2023),
+(10, 'Jasmine', 9, 'F', 2023);
+
+
+INSERT INTO Prizes (prizeid, prize_money, eventid, rank, year) VALUES
+(1, 1000, 1, 1, 2023),
+(2, 500, 1, 2, 2023),
+(3, 300, 1, 3, 2023),
+(4, 1000, 2, 1, 2023),
+(5, 500, 2, 2, 2023),
+(6, 300, 2, 3, 2023),
+(7, 1000, 3, 1, 2023),
+(8, 500, 3, 2, 2023),
+(9, 300, 3, 3, 2023),
+(10, 1000, 4, 1, 2023);
+
+
+INSERT INTO Winners (prizeid, playerid) VALUES
+(1, 1),
+(2, 2),
+(3, 1),
+(4, 3),
+(5, 3),
+(6, 4),
+(7, 4),
+(8, 5),
+(9, 6),
+(10, 5);
+
+
+
+
+
+
+
+SELECT p.name, COUNT(w.prizeid) AS total_prizes, pr.rank
+FROM Winners w
+JOIN Participant p ON w.playerid = p.playerid
+JOIN Prizes pr ON w.prizeid = pr.prizeid
+GROUP BY p.name, pr.rank
+ORDER BY pr.rank, total_prizes DESC;
+
+
+
+SELECT e.name
+FROM Event e
+JOIN Prizes pr ON e.eventid = pr.eventid
+JOIN Winners w ON pr.prizeid = w.prizeid
+JOIN Participant p ON w.playerid = p.playerid
+GROUP BY e.name
+HAVING COUNT(DISTINCT CASE WHEN p.gender = 'M' THEN 1 END) = 0;
+
+
+
+SELECT e.name AS event_name, p.name AS participant_name
+FROM Prizes pr
+JOIN Winners w ON pr.prizeid = w.prizeid
+JOIN Participant p ON w.playerid = p.playerid
+JOIN Event e ON pr.eventid = e.eventid
+WHERE pr.rank = 2;
+
+
