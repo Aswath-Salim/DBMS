@@ -67,8 +67,8 @@ FOR EACH ROW
 BEGIN
     UPDATE College_vacancies
     SET admitted = admitted + 1,
-        vacancy = totalseats - admitted
-    WHERE br_id = NEW.br_id;
+        vacancy = totalseats - admitted-1
+    WHERE br_id = :NEW.br_id;
 END;
 
 
@@ -80,14 +80,14 @@ BEGIN
         -- Decrease admitted and update vacancy for the old branch
         UPDATE College_vacancies
         SET admitted = admitted - 1,
-            vacancy = totalseats - admitted
-        WHERE br_id = OLD.br_id;
+            vacancy = totalseats - admitted+1
+        WHERE br_id = :OLD.br_id;
 
         -- Increase admitted and update vacancy for the new branch
         UPDATE College_vacancies
         SET admitted = admitted + 1,
-            vacancy = totalseats - admitted
-        WHERE br_id = NEW.br_id;
+            vacancy = totalseats - admitted-1
+        WHERE br_id = :NEW.br_id;
     END IF;
 END;
 
@@ -98,7 +98,7 @@ FOR EACH ROW
 BEGIN
     UPDATE College_vacancies
     SET admitted = admitted - 1,
-        vacancy = totalseats - admitted
-    WHERE br_id = OLD.br_id;
+        vacancy = totalseats - admitted+1
+    WHERE br_id = :OLD.br_id;
 END;
 
