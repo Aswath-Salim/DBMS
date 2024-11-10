@@ -114,3 +114,31 @@ JOIN Event e ON pr.eventid = e.eventid
 WHERE pr.rank = 2;
 
 
+
+
+
+SELECT name
+FROM Participant
+WHERE playerid IN (
+    SELECT playerid
+    FROM (
+        SELECT w.playerid, COUNT(*) AS prize_count
+        FROM Winners w
+        JOIN Prizes pr ON w.prizeid = pr.prizeid
+        WHERE pr.rank IN (1, 2, 3)
+        GROUP BY w.playerid
+    ) AS prize_counts
+    WHERE prize_count = (
+        SELECT MAX(prize_count)
+        FROM (
+            SELECT COUNT(*) AS prize_count
+            FROM Winners w
+            JOIN Prizes pr ON w.prizeid = pr.prizeid
+            WHERE pr.rank IN (1, 2, 3)
+            GROUP BY w.playerid
+        ) AS all_counts
+    )
+);
+
+
+
