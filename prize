@@ -85,29 +85,14 @@ INSERT INTO Winners (prizeid, playerid) VALUES
 (10, 5);
 
 
-
-
-
-
-WITH PrizeCounts AS (
-    SELECT p.name, pr.rank, COUNT(w.prizeid) AS prize_count
-    FROM Winners w
-    JOIN Participant p ON w.playerid = p.playerid
-    JOIN Prizes pr ON w.prizeid = pr.prizeid
-    GROUP BY p.name, pr.rank
-),
-MaxPrizeCounts AS (
-    SELECT rank, MAX(prize_count) AS max_count
-    FROM PrizeCounts
-    GROUP BY rank
-)
-SELECT pc.name, pc.rank, pc.prize_count
-FROM PrizeCounts pc
-JOIN MaxPrizeCounts mpc ON pc.rank = mpc.rank AND pc.prize_count = mpc.max_count
-ORDER BY pc.rank, pc.name;
-
-
-
+SELECT p.name
+FROM Participant p
+JOIN Winners w ON p.playerid = w.playerid
+JOIN Prizes pr ON w.prizeid = pr.prizeid
+WHERE pr.rank IN (1, 2, 3)
+GROUP BY p.name
+ORDER BY COUNT(pr.rank) DESC
+FETCH FIRST 1 ROWS ONLY;
 
 
 
