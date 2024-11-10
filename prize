@@ -116,29 +116,16 @@ WHERE pr.rank = 2;
 
 
 
-
+WITH PrizeCounts AS (
+    SELECT p.name, COUNT(pr.rank) AS prize_count
+    FROM Participant p
+    JOIN Winners w ON p.playerid = w.playerid
+    JOIN Prizes pr ON w.prizeid = pr.prizeid
+    WHERE pr.rank IN (1, 2, 3)
+    GROUP BY p.name
+)
 SELECT name
-FROM Participant
-WHERE playerid IN (
-    SELECT playerid
-    FROM (
-        SELECT w.playerid, COUNT(*) AS prize_count
-        FROM Winners w
-        JOIN Prizes pr ON w.prizeid = pr.prizeid
-        WHERE pr.rank IN (1, 2, 3)
-        GROUP BY w.playerid
-    ) AS prize_counts
-    WHERE prize_count = (
-        SELECT MAX(prize_count)
-        FROM (
-            SELECT COUNT(*) AS prize_count
-            FROM Winners w
-            JOIN Prizes pr ON w.prizeid = pr.prizeid
-            WHERE pr.rank IN (1, 2, 3)
-            GROUP BY w.playerid
-        ) AS all_counts
-    )
-);
-
+FROM PrizeCounts
+WHERE prize_count = (SELECT MAX(prize_count) FROM PrizeCounts);
 
 
